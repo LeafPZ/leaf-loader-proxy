@@ -6,6 +6,8 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 
+import org.jspecify.annotations.Nullable;
+
 import dev.aoqia.leaf.proxy.Constants;
 import dev.aoqia.leaf.proxy.Main;
 import dev.aoqia.leaf.proxy.Utils;
@@ -19,8 +21,9 @@ public class EntrypointTransformer implements ClassFileTransformer {
     }
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-        ProtectionDomain protectionDomain, byte[] classFileBuffer) {
+    public byte @Nullable [] transform(@Nullable ClassLoader loader, String className,
+        @Nullable Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classFileBuffer)
+    {
         final String entrypointClass = ClientEntrypoint.class.getName().replace('.', '/') + ".class";
         byte[] entrypointClassBytes;
         try (final InputStream is = Main.class.getClassLoader().getResourceAsStream(entrypointClass)) {
@@ -30,7 +33,8 @@ public class EntrypointTransformer implements ClassFileTransformer {
             throw new RuntimeException(e);
         }
 
-        // TODO: Differentiate between client and server?
+        // TODO: Differentiate between client and server? Maybe a -server arg or something
+        //   or maybe we can determine client vs server based on original entrypoint?
         final String entrypoint = Utils.internalName(Constants.CLIENT_ENTRYPOINT);
         if (entrypoint.equals(className) && inst.removeTransformer(this)) {
             return Utils.remapClass(entrypointClassBytes, entrypoint);
