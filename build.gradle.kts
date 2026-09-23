@@ -23,6 +23,8 @@ plugins {
 dependencies {
     implementation(libs.asm.commons)
     implementation(libs.dsljson)
+
+    compileOnly(libs.jspecify)
 }
 
 java {

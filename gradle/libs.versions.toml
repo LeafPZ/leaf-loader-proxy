@@ -1,12 +1,13 @@
 [versions]
 asm = "9.10.1"
 dsljson = "2.0.2"
+jspecify = "1.0.1"
 shadow = "9.6.1"
 
 [libraries]
 asm-commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm" }
-
 dsljson = { module = "com.dslplatform:dsl-json", version.ref = "dsljson" }
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
