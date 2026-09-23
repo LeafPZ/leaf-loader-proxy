@@ -1,6 +1,6 @@
 <div align="center">
 
-**A loader that loads [leaf-loader](https://github.com/aoqia194/leaf-loader) from the Workshop. Ironic?!**
+**A loader that loads [leaf-loader][LeafLoader] from the Workshop. Ironic?!**
 
 ![License](https://img.shields.io/github/license/aoqia194/leaf-loader-proxy?label=License)
 ![Gradle version](https://img.shields.io/badge/Gradle-9.7.1-teal?logo=gradle)
@@ -12,7 +12,7 @@
 </div>
 
 The purpose of the proxy is to load the loader. Essentially, it discovers the loader JAR and all of its dependencies
-from the [leaf-loader][1] Workshop mod and will load them instead of the game directly.
+from the [leaf-loader][LeafLoaderWorkshop] Workshop mod and will load them instead of the game directly.
 
 It allows for one major thing to happen: the loader is able to load dynamically, allowing for automatic loader updates
 directly from the workshop. This provides the most convenience and ease-of-use as compared to manual installation.
@@ -23,8 +23,8 @@ directly from the workshop. This provides the most convenience and ease-of-use a
 
 ### Installation
 
-To install the proxy, you should be using [leaf-installer][2]. If you want to install it purely for testing in-dev, you
-can run the `copyToGame` Gradle task.
+To install the proxy, you should be using [leaf-installer][LeafInstaller]. If you want to install it purely for testing
+in-dev, you can run the `copyToGame` Gradle task.
 
 ### Usage
 
@@ -34,7 +34,7 @@ The proxy jar should be placed in the game folder under the `.leaf/lib/` path. Y
 by adding `-javaagent:.leaf/lib/loader-proxy:0.2.0.jar` to the game's launch options. The version number in this
 example may not be the same as the version of your installed proxy, so change it if needed.
 
-If you need help with this, you should read [Startup Parameters][3].
+If you need help with this, you should read [Startup Parameters][StartupParameters].
 
 ### Configuration
 
@@ -53,6 +53,7 @@ You can build the project like so:
 ./gradlew build
 ```
 
-[1]: https://steamcommunity.com/sharedfiles/filedetails/?id=3776625738
-[2]: https://github.com/aoqia194/leaf-installer
-[3]: https://pzwiki.net/wiki/Startup_parameters
+[LeafLoader]: https://github.com/aoqia194/leaf-loader
+[LeafLoaderWorkshop]: https://steamcommunity.com/sharedfiles/filedetails/?id=3776625738
+[LeafInstaller]: https://github.com/aoqia194/leaf-installer
+[StartupParameters]: https://pzwiki.net/wiki/Startup_parameters
