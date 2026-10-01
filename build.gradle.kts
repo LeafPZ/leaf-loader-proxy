@@ -109,22 +109,11 @@ publishing {
                     }
                 }
 
-                issueManagement {
-                    system = "GitHub"
-                    url = "${property("url").toString()}/issues"
-                }
-
                 licenses {
                     license {
                         name = "MIT"
                         url = "https://spdx.org/licenses/MIT.html"
                     }
-                }
-
-                scm {
-                    connection = "scm:git:${property("url").toString()}.git"
-                    developerConnection = "scm:git:${property("url").toString().replace("https", "ssh")}.git"
-                    url = property("url").toString()
                 }
             }
         }

@@ -2,11 +2,11 @@
 
 **A loader that loads [leaf-loader][LeafLoader] from the Workshop. Ironic?!**
 
-![License](https://img.shields.io/github/license/aoqia194/leaf-loader-proxy?label=License)
+![License](https://img.shields.io/github/license/LeafPZ/leaf-loader-proxy?label=License)
 ![Gradle version](https://img.shields.io/badge/Gradle-9.7.1-teal?logo=gradle)
-![Build status](https://github.com/aoqia194/leaf-loader-proxy/actions/workflows/build.yml/badge.svg?branch=main&label=build)
-![Downloads](https://img.shields.io/github/downloads/aoqia194/leaf-loader-proxy/total?label=Downloads)
-![Code Size](https://img.shields.io/github/languages/code-size/aoqia194/leaf-loader-proxy?label=Code%20Size)
+![Build status](https://github.com/LeafPZ/leaf-loader-proxy/actions/workflows/build.yml/badge.svg?branch=main&label=build)
+![Downloads](https://img.shields.io/github/downloads/LeafPZ/leaf-loader-proxy/total?label=Downloads)
+![Code Size](https://img.shields.io/github/languages/code-size/LeafPZ/leaf-loader-proxy?label=Code%20Size)
 ![Maven status](https://img.shields.io/website?url=https%3A%2F%2Fmaven.aoqia.dev%2F&label=Maven)
 
 </div>
@@ -53,7 +53,7 @@ You can build the project like so:
 ./gradlew build
 ```
 
-[LeafLoader]: https://github.com/aoqia194/leaf-loader
+[LeafLoader]: https://github.com/LeafPZ/leaf-loader
 [LeafLoaderWorkshop]: https://steamcommunity.com/sharedfiles/filedetails/?id=3776625738
-[LeafInstaller]: https://github.com/aoqia194/leaf-installer
+[LeafInstaller]: https://github.com/LeafPZ/leaf-installer
 [StartupParameters]: https://pzwiki.net/wiki/Startup_parameters
