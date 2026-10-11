@@ -64,28 +64,22 @@ public class ClientEntrypoint {
             }).toArray(String[]::new));
             log("Classpath is currently: " + System.getProperty(Constants.Properties.CLASS_PATH));
 
-            final URLClassLoader cl = new URLClassLoader(urls,
-                ClassLoader.getPlatformClassLoader());
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try (final URLClassLoader cl = new URLClassLoader(urls,
+                ClassLoader.getPlatformClassLoader())) {
+                log("Classloader was created successfully.");
+
+                final Class<?> entrypoint = Class.forName(getLoaderEntrypoint(cl), true, cl);
+                final Method entryMethod = entrypoint.getMethod("main", String[].class);
+
+                log("Invoking loader entrypoint, have fun!");
                 try {
-                    cl.close();
-                } catch (IOException e) {
-                    e.printStackTrace(System.err);
+                    entryMethod.invoke(null, (Object) args);
+                } catch (InvocationTargetException e) {
+                    log("Failed on thread " + Thread.currentThread().getName() + " with TCCL "
+                        + Thread.currentThread().getContextClassLoader());
+                    log(e);
+                    throw e;
                 }
-            }, "leaf-proxy-classloader-close"));
-            log("Classloader was created successfully.");
-
-            final Class<?> entrypoint = Class.forName(getLoaderEntrypoint(cl), true, cl);
-            final Method entryMethod = entrypoint.getMethod("main", String[].class);
-
-            log("Invoking loader entrypoint, have fun!");
-            try {
-                entryMethod.invoke(null, (Object) args);
-            } catch (InvocationTargetException e) {
-                log("Failed on thread " + Thread.currentThread().getName() + " with TCCL "
-                    + Thread.currentThread().getContextClassLoader());
-                log(e);
-                throw e;
             }
         } catch (Exception e) {
             Utils.closeLog();
