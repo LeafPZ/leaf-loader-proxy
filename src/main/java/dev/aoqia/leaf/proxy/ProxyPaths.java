@@ -1,5 +1,7 @@
 package dev.aoqia.leaf.proxy;
 
+import dev.aoqia.leaf.proxy.entrypoints.ClientEntrypoint;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,15 +22,17 @@ public final class ProxyPaths {
                 }
             }
         }
+
         final Path candidate = workingDirectory.toAbsolutePath().normalize().resolve("projectzomboid.jar");
         if (Files.isRegularFile(candidate)) {
             return candidate.toRealPath();
         }
+
         throw new IOException("Cannot find projectzomboid.jar relative to " + proxyJar
             + " or in " + workingDirectory.toAbsolutePath());
     }
 
-    public static Path loaderDirectory(final Path gameJar, final String workshopId, final String override)
+    public static Path loaderDirectory(final Path gameJar, final String override)
         throws IOException {
         if (override != null) {
             if (override.isBlank()) {
@@ -36,13 +40,15 @@ public final class ProxyPaths {
             }
             return Path.of(override).toAbsolutePath().normalize();
         }
+
         for (Path directory = gameJar.getParent(); directory != null; directory = directory.getParent()) {
             if (directory.getFileName() != null
                 && directory.getFileName().toString().equalsIgnoreCase("steamapps")) {
-                return directory.resolve("workshop/content/108600").resolve(workshopId)
+                return directory.resolve("workshop/content/108600").resolve(ClientEntrypoint.WORKSHOP_ID)
                     .resolve("mods/LeafLoader/common/media/java");
             }
         }
+
         throw new IOException("Cannot locate Steam Workshop relative to " + gameJar
             + ". Use the proxy argument -loaderPath=<directory containing the loader JARs>.");
     }
@@ -50,8 +56,9 @@ public final class ProxyPaths {
     public static List<Path> loaderJars(final Path directory) throws IOException {
         if (!Files.isDirectory(directory)) {
             throw new IOException("Loader directory does not exist: " + directory
-                + ". Subscribe to Leaf Loader (Workshop 3776625738), finish its download, or set -loaderPath.");
+                + ". Subscribe to Leaf Loader (Workshop " + ClientEntrypoint.WORKSHOP_ID + "), finish its download, or set -loaderPath.");
         }
+
         try (var files = Files.list(directory)) {
             final List<Path> jars = files.filter(Files::isRegularFile)
                 .filter(path -> {
@@ -60,9 +67,11 @@ public final class ProxyPaths {
                 })
                 .sorted(Comparator.comparing(path -> path.getFileName().toString()))
                 .toList();
+
             if (jars.isEmpty()) {
                 throw new IOException("No loader JARs found in " + directory);
             }
+
             return jars;
         }
     }

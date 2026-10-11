@@ -24,6 +24,7 @@ import static dev.aoqia.leaf.proxy.Utils.log;
 
 public class ClientEntrypoint {
     private static final DslJson<Object> JSON = new DslJson<>(Settings.basicSetup());
+    public static final String WORKSHOP_ID = "3776625738";
 
     static void main(final String[] args) {
         try {
@@ -43,7 +44,7 @@ public class ClientEntrypoint {
             log("Leaf client game JAR: " + System.getProperty("leaf.gameJarPath.client"));
 
             // If there's a better way to not hardcode this ID...
-            final File[] loaderJars = getLoaderJars(gameJar, "3776625738");
+            final File[] loaderJars = getLoaderJars(gameJar);
 
             final URL[] urls = new URL[loaderJars.length + 1];
             for (int i = 0; i < loaderJars.length; ++i) {
@@ -96,9 +97,9 @@ public class ClientEntrypoint {
         return new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
     }
 
-    private static File[] getLoaderJars(final Path gameJar, final String workshopId) throws IOException {
+    private static File[] getLoaderJars(final Path gameJar) throws IOException {
         log("Attempting to get loader jars...");
-        final Path jarDir = ProxyPaths.loaderDirectory(gameJar, workshopId, Main.args.get("loaderPath"));
+        final Path jarDir = ProxyPaths.loaderDirectory(gameJar, Main.args.get("loaderPath"));
         log("Loader directory: " + jarDir);
         return ProxyPaths.loaderJars(jarDir).stream().map(Path::toFile).toArray(File[]::new);
     }

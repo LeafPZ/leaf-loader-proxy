@@ -40,16 +40,18 @@ public class Utils {
 
     public static void log(final String s) {
         System.out.println(s);
-        if (LOG != null) {
-            LOG.println(s);
+        if (LOG == null) {
+            return;
         }
+        LOG.println(s);
     }
 
     public static void log(final Exception e) {
         e.printStackTrace(System.err);
-        if (LOG != null) {
-            e.printStackTrace(LOG);
+        if (LOG == null) {
+            return;
         }
+        e.printStackTrace(LOG);
     }
 
     public static byte[] remapClass(final byte[] originalBytes, final String newInternalName) {
