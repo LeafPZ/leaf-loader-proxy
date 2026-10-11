@@ -1,0 +1,69 @@
+package dev.aoqia.leaf.proxy;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.List;
+
+public final class ProxyPaths {
+    private static final List<String> GAME_JAR_PATHS = List.of(
+        "projectzomboid.jar", "projectzomboid/projectzomboid.jar");
+
+    public static Path gameJar(final Path proxyJar, final Path workingDirectory) throws IOException {
+        for (Path directory = proxyJar.toAbsolutePath().normalize().getParent(); directory != null;
+            directory = directory.getParent()) {
+            for (String relativePath : GAME_JAR_PATHS) {
+                final Path candidate = directory.resolve(relativePath);
+                if (Files.isRegularFile(candidate)) {
+                    return candidate.toRealPath();
+                }
+            }
+        }
+        final Path candidate = workingDirectory.toAbsolutePath().normalize().resolve("projectzomboid.jar");
+        if (Files.isRegularFile(candidate)) {
+            return candidate.toRealPath();
+        }
+        throw new IOException("Cannot find projectzomboid.jar relative to " + proxyJar
+            + " or in " + workingDirectory.toAbsolutePath());
+    }
+
+    public static Path loaderDirectory(final Path gameJar, final String workshopId, final String override)
+        throws IOException {
+        if (override != null) {
+            if (override.isBlank()) {
+                throw new IOException("-loaderPath must name the directory containing the loader and dependency JARs");
+            }
+            return Path.of(override).toAbsolutePath().normalize();
+        }
+        for (Path directory = gameJar.getParent(); directory != null; directory = directory.getParent()) {
+            if (directory.getFileName() != null
+                && directory.getFileName().toString().equalsIgnoreCase("steamapps")) {
+                return directory.resolve("workshop/content/108600").resolve(workshopId)
+                    .resolve("mods/LeafLoader/common/media/java");
+            }
+        }
+        throw new IOException("Cannot locate Steam Workshop relative to " + gameJar
+            + ". Use the proxy argument -loaderPath=<directory containing the loader JARs>.");
+    }
+
+    public static List<Path> loaderJars(final Path directory) throws IOException {
+        if (!Files.isDirectory(directory)) {
+            throw new IOException("Loader directory does not exist: " + directory
+                + ". Subscribe to Leaf Loader (Workshop 3776625738), finish its download, or set -loaderPath.");
+        }
+        try (var files = Files.list(directory)) {
+            final List<Path> jars = files.filter(Files::isRegularFile)
+                .filter(path -> {
+                    final String name = path.getFileName().toString();
+                    return name.endsWith(".jar") && !name.endsWith("-sources.jar");
+                })
+                .sorted(Comparator.comparing(path -> path.getFileName().toString()))
+                .toList();
+            if (jars.isEmpty()) {
+                throw new IOException("No loader JARs found in " + directory);
+            }
+            return jars;
+        }
+    }
+}
