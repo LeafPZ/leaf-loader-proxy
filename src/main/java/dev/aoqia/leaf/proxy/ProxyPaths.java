@@ -2,6 +2,7 @@ package dev.aoqia.leaf.proxy;
 
 import dev.aoqia.leaf.proxy.entrypoints.ClientEntrypoint;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public final class ProxyPaths {
     private static final List<String> GAME_JAR_PATHS = List.of(
-        "projectzomboid.jar", "projectzomboid/projectzomboid.jar");
+        "projectzomboid.jar", "projectzomboid/projectzomboid.jar", "Contents/Java/projectzomboid.jar");
 
     public static Path gameJar(final Path proxyJar, final Path workingDirectory) throws IOException {
         for (Path directory = proxyJar.toAbsolutePath().normalize().getParent(); directory != null;
@@ -28,7 +29,7 @@ public final class ProxyPaths {
             return candidate.toRealPath();
         }
 
-        throw new IOException("Cannot find projectzomboid.jar relative to " + proxyJar
+        throw new FileNotFoundException("Cannot find projectzomboid.jar relative to " + proxyJar
             + " or in " + workingDirectory.toAbsolutePath());
     }
 
@@ -69,7 +70,7 @@ public final class ProxyPaths {
                 .toList();
 
             if (jars.isEmpty()) {
-                throw new IOException("No loader JARs found in " + directory);
+                throw new RuntimeException("No loader JARs found in " + directory);
             }
 
             return jars;

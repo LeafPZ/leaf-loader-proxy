@@ -40,17 +40,11 @@ public class Utils {
 
     public static void log(final String s) {
         System.out.println(s);
-        if (LOG == null) {
-            return;
-        }
         LOG.println(s);
     }
 
     public static void log(final Exception e) {
         e.printStackTrace(System.err);
-        if (LOG == null) {
-            return;
-        }
         e.printStackTrace(LOG);
     }
 

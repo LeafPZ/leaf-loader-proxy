@@ -33,15 +33,8 @@ public class ClientEntrypoint {
             Utils.initLog(gameJar.getParent().toFile());
             log("Initialised logging for leaf-loader-proxy.");
             log("Proxy args: " + Arrays.toString(Main.args.toArray()));
-
             log("Proxy JAR: " + proxyJar);
             log("Game JAR: " + gameJar);
-            if (System.getProperty("leaf.gameJarPath") == null
-                && System.getProperty("leaf.gameJarPath.client") == null) {
-                System.setProperty("leaf.gameJarPath", gameJar.toString());
-            }
-            log("Leaf common game JAR: " + System.getProperty("leaf.gameJarPath"));
-            log("Leaf client game JAR: " + System.getProperty("leaf.gameJarPath.client"));
 
             // If there's a better way to not hardcode this ID...
             final File[] loaderJars = getLoaderJars(gameJar);
