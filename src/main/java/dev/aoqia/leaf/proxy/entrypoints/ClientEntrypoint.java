@@ -16,6 +16,7 @@ import com.dslplatform.json.runtime.Settings;
 
 import dev.aoqia.leaf.proxy.Constants;
 import dev.aoqia.leaf.proxy.Main;
+import dev.aoqia.leaf.proxy.ProxyPaths;
 import dev.aoqia.leaf.proxy.Utils;
 import dev.aoqia.leaf.proxy.json.InstallerJson;
 
@@ -23,24 +24,26 @@ import static dev.aoqia.leaf.proxy.Utils.log;
 
 public class ClientEntrypoint {
     private static final DslJson<Object> JSON = new DslJson<>(Settings.basicSetup());
+    public static final String WORKSHOP_ID = "3776625738";
 
     static void main(final String[] args) {
         try {
             final File proxyJar = getProxyJarPath();
-            Utils.initLog(proxyJar.getParentFile());
+            final Path gameJar = ProxyPaths.gameJar(proxyJar.toPath(), Path.of(""));
+            Utils.initLog(gameJar.getParent().toFile());
             log("Initialised logging for leaf-loader-proxy.");
             log("Proxy args: " + Arrays.toString(Main.args.toArray()));
-
-            final File gameJar = proxyJar.toPath().getParent().resolve("projectzomboid.jar").toFile();
+            log("Proxy JAR: " + proxyJar);
+            log("Game JAR: " + gameJar);
 
             // If there's a better way to not hardcode this ID...
-            final File[] loaderJars = getLoaderJars(proxyJar, "3776625738");
+            final File[] loaderJars = getLoaderJars(gameJar);
 
             final URL[] urls = new URL[loaderJars.length + 1];
             for (int i = 0; i < loaderJars.length; ++i) {
                 urls[i] = loaderJars[i].toURI().toURL();
             }
-            urls[urls.length - 1] = gameJar.toURI().toURL();
+            urls[urls.length - 1] = gameJar.toUri().toURL();
 
             // Remove the proxy jar from the classpath ASAP
             Utils.removeFromClasspath(s -> s.endsWith(proxyJar.getName()));
@@ -55,7 +58,7 @@ public class ClientEntrypoint {
             log("Classpath is currently: " + System.getProperty(Constants.Properties.CLASS_PATH));
 
             try (final URLClassLoader cl = new URLClassLoader(urls,
-                ClientEntrypoint.class.getClassLoader().getParent())) {
+                ClassLoader.getPlatformClassLoader())) {
                 log("Classloader was created successfully.");
 
                 final Class<?> entrypoint = Class.forName(getLoaderEntrypoint(cl), true, cl);
@@ -78,41 +81,14 @@ public class ClientEntrypoint {
     }
 
     private static File getProxyJarPath() throws URISyntaxException {
-        return new File(ClientEntrypoint.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        return new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
     }
 
-    private static File[] getLoaderJars(final File proxyJar, final String workshopId) {
+    private static File[] getLoaderJars(final Path gameJar) throws IOException {
         log("Attempting to get loader jars...");
-
-        final Path jarDir;
-        if (Main.args.containsKey("loaderPath")) {
-            jarDir = Path.of(Main.args.get("loaderPath"));
-        } else {
-            final Path workshopPath = getWorkshopPath(proxyJar);
-            final Path modPath = workshopPath.resolve(workshopId, "mods", "LeafLoader");
-            jarDir = modPath.resolve("common", "media", "java");
-        }
-
-        final File[] jars = jarDir
-            .toFile()
-            .listFiles((_, name) -> name.endsWith(".jar") && !name.endsWith("-sources.jar"));
-
-        if (jars == null || jars.length == 0) {
-            final var e = new RuntimeException("Loader JAR doesn't exist in the workshop mod");
-            log(e);
-            throw e;
-        }
-
-        return jars;
-    }
-
-    private static Path getWorkshopPath(final File proxyJar) {
-        Path gamePath = proxyJar.toPath().getParent();
-        if ("projectzomboid".equals(gamePath.getFileName().toString())) {
-            gamePath = gamePath.getParent();
-        }
-
-        return gamePath.getParent().getParent().resolve("workshop", "content", "108600");
+        final Path jarDir = ProxyPaths.loaderDirectory(gameJar, Main.args.get("loaderPath"));
+        log("Loader directory: " + jarDir);
+        return ProxyPaths.loaderJars(jarDir).stream().map(Path::toFile).toArray(File[]::new);
     }
 
     private static String getLoaderEntrypoint(final URLClassLoader cl) throws IOException {

@@ -22,7 +22,7 @@ public class Utils {
     public static void initLog(final File gameDir) throws IOException {
         File leafDir = new File(gameDir, ".leaf/");
         if (!leafDir.exists()) {
-            Files.createDirectory(leafDir.toPath());
+            Files.createDirectories(leafDir.toPath());
         }
 
         File logFile = new File(leafDir, "proxy.log");
