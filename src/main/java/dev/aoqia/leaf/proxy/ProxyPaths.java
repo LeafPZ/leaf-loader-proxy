@@ -56,7 +56,7 @@ public final class ProxyPaths {
 
     public static List<Path> loaderJars(final Path directory) throws IOException {
         if (!Files.isDirectory(directory)) {
-            throw new IOException("Loader directory does not exist: " + directory
+            throw new FileNotFoundException("Loader directory does not exist: " + directory
                 + ". Subscribe to Leaf Loader (Workshop " + ClientEntrypoint.WORKSHOP_ID + "), finish its download, or set -loaderPath.");
         }
 
