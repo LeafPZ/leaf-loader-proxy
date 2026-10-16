@@ -24,19 +24,18 @@ import static dev.aoqia.leaf.proxy.Utils.log;
 
 public class ClientEntrypoint {
     private static final DslJson<Object> JSON = new DslJson<>(Settings.basicSetup());
-    public static final String WORKSHOP_ID = "3776625738";
 
     static void main(final String[] args) {
         try {
             final File proxyJar = getProxyJarPath();
             final Path gameJar = ProxyPaths.gameJar(proxyJar.toPath(), Path.of(""));
             Utils.initLog(gameJar.getParent().toFile());
-            log("Initialised logging for leaf-loader-proxy.");
+
+            log("Initialised logging for leaf-loader-proxy");
             log("Proxy args: " + Arrays.toString(Main.args.toArray()));
             log("Proxy JAR: " + proxyJar);
             log("Game JAR: " + gameJar);
 
-            // If there's a better way to not hardcode this ID...
             final File[] loaderJars = getLoaderJars(gameJar);
 
             final URL[] urls = new URL[loaderJars.length + 1];
@@ -57,8 +56,7 @@ public class ClientEntrypoint {
             }).toArray(String[]::new));
             log("Classpath is currently: " + System.getProperty(Constants.Properties.CLASS_PATH));
 
-            try (final URLClassLoader cl = new URLClassLoader(urls,
-                ClassLoader.getPlatformClassLoader())) {
+            try (final URLClassLoader cl = new URLClassLoader(urls, ClassLoader.getPlatformClassLoader())) {
                 log("Classloader was created successfully.");
 
                 final Class<?> entrypoint = Class.forName(getLoaderEntrypoint(cl), true, cl);
@@ -68,8 +66,8 @@ public class ClientEntrypoint {
                 try {
                     entryMethod.invoke(null, (Object) args);
                 } catch (InvocationTargetException e) {
-                    log("Failed on thread " + Thread.currentThread().getName() + " with TCCL "
-                        + Thread.currentThread().getContextClassLoader());
+                    log(String.format("Failed on thread %s with TCCL %s", Thread.currentThread().getName(),
+                        Thread.currentThread().getContextClassLoader().toString()));
                     log(e);
                     throw e;
                 }
@@ -86,7 +84,7 @@ public class ClientEntrypoint {
 
     private static File[] getLoaderJars(final Path gameJar) throws IOException {
         log("Attempting to get loader jars...");
-        final Path jarDir = ProxyPaths.loaderDirectory(gameJar, Main.args.get("loaderPath"));
+        final Path jarDir = ProxyPaths.loaderDirectory(gameJar, Main.args.get(Constants.Arguments.LOADER_PATH));
         log("Loader directory: " + jarDir);
         return ProxyPaths.loaderJars(jarDir).stream().map(Path::toFile).toArray(File[]::new);
     }
