@@ -34,8 +34,9 @@ public class ClientEntrypoint {
             Utils.initLog(gameJar.getParent().toFile());
 
             log("Initialised logging for leaf-loader-proxy");
-            log("Proxy args: " + Arrays.toString(Main.args.toArray()));
+            log("Proxy version: " + Constants.VERSION);
             log("Proxy JAR: " + proxyJar);
+            log("Proxy args: " + Arrays.toString(Main.args.toArray()));
             log("Game JAR: " + gameJar);
 
             final File[] loaderJars = getLoaderJars(gameJar);
