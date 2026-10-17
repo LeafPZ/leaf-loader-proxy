@@ -11,4 +11,4 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: LeafPZ/.github/.github/workflows/labeler.yml@dd1da82eb1e70faa48ba1f34219bf0ecf46da0e5
+    uses: LeafPZ/.github/.github/workflows/labeler.yml@76170fca697a257c6b4787740490cae1130aaf4d
