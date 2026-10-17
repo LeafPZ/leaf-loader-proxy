@@ -1,5 +1,5 @@
 [versions]
-asm = "9.10.1"
+asm = "9.11"
 dsljson = "2.0.2"
 jspecify = "1.0.1"
 shadow = "9.6.1"

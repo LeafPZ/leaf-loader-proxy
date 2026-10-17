@@ -57,7 +57,7 @@ tasks.shadowJar {
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.release = 25
-    options.compilerArgs.add("-Werror")
+    options.compilerArgs.addAll(listOf("-Werror"))
 }
 
 // Workaround for https://youtrack.jetbrains.com/issue/KT-46466
