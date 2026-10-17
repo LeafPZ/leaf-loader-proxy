@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
 import dev.aoqia.leaf.proxy.transformers.EntrypointTransformer;
 
 public class Main {
-    public static Arguments args;
+    public static @Nullable Arguments args;
 
     public static void premain(@Nullable String args, Instrumentation inst) {
         Main.args = new Arguments();

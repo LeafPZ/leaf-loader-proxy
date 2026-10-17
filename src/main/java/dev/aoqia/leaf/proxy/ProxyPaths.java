@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 public final class ProxyPaths {
     private static final List<String> GAME_JAR_PATHS = List.of("projectzomboid.jar",
         "projectzomboid/projectzomboid.jar", "Contents/Java/projectzomboid.jar");
@@ -31,7 +33,7 @@ public final class ProxyPaths {
             + " or in " + workingDirectory.toAbsolutePath());
     }
 
-    public static Path loaderDirectory(final Path gameJar, final String override) throws IOException {
+    public static Path loaderDirectory(Path gameJar, @Nullable String override) throws IOException {
         if (override != null) {
             if (override.isBlank()) {
                 throw new IOException("-loaderPath must name the directory containing the loader and dependency JARs");
@@ -51,7 +53,9 @@ public final class ProxyPaths {
             + ". Use the proxy argument -loaderPath=<directory containing the loader JARs>.");
     }
 
-    public static List<Path> loaderJars(final Path directory) throws IOException {
+    public static List<Path> loaderJars(Path directory) throws IOException {
+        assert Main.args != null;
+
         if (!Files.isDirectory(directory)) {
             throw new FileNotFoundException(String.format("Loader directory does not exist: %s."
                     + "Subscribe to Leaf Loader (Workshop %s), finish its download, or set -loaderPath.", directory,

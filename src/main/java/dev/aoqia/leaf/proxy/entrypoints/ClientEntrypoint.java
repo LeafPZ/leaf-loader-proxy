@@ -26,6 +26,8 @@ public class ClientEntrypoint {
     private static final DslJson<Object> JSON = new DslJson<>(Settings.basicSetup());
 
     static void main(final String[] args) {
+        assert Main.args != null;
+
         try {
             final File proxyJar = getProxyJarPath();
             final Path gameJar = ProxyPaths.gameJar(proxyJar.toPath(), Path.of(""));
@@ -83,6 +85,8 @@ public class ClientEntrypoint {
     }
 
     private static File[] getLoaderJars(final Path gameJar) throws IOException {
+        assert Main.args != null;
+
         log("Attempting to get loader jars...");
         final Path jarDir = ProxyPaths.loaderDirectory(gameJar, Main.args.get(Constants.Arguments.LOADER_PATH));
         log("Loader directory: " + jarDir);
