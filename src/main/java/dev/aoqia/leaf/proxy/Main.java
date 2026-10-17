@@ -12,8 +12,9 @@ public class Main {
     public static void premain(@Nullable String args, Instrumentation inst) {
         Main.args = new Arguments();
         if (args != null) {
-            Main.args.parse(args.split(";"));
+            Main.args.parse(args.split(","));
         }
+        assert Main.args != null;
 
         inst.addTransformer(new EntrypointTransformer(inst), false);
     }

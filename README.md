@@ -39,11 +39,12 @@ If you need help with this, you should read [Startup Parameters][StartupParamete
 ### Configuration
 
 You may want to provide arguments to the proxy. The format for these are `-arg123` for single args and `-key=value` for
-value args. Arguments are separated with a semicolon `;`. The table for all available arguments is below.
+value args. Arguments are separated with a comma `,`. The table for all available arguments is below.
 
 | Argument     | Type   | Example                        |
 |--------------|--------|--------------------------------|
-| `loaderPath` | Single | `-loaderPath="path/to/loader"` |
+| `loaderPath` | Value  | `-loaderPath="path/to/loader"` |
+| `snapshot`   | Single | `-snapshot`                    |
 
 ### Development
 
