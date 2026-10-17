@@ -16,5 +16,6 @@ public class Constants {
 
     public static final class Arguments {
         public static final String LOADER_PATH = "loaderPath";
+        public static final String SNAPSHOT = "snapshot";
     }
 }

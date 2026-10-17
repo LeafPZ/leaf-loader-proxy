@@ -61,8 +61,18 @@ public final class ProxyPaths {
         try (var files = Files.list(directory)) {
             final List<Path> jars = files.filter(Files::isRegularFile)
                 .filter(path -> {
-                    final String name = path.getFileName().toString();
-                    return name.endsWith(".jar") && !name.endsWith("-sources.jar");
+                    String name = path.getFileName().toString();
+
+                    if (!name.endsWith(".jar") || name.endsWith("-sources.jar") || name.endsWith("-javadoc.jar")
+                        || name.endsWith("-fat.jar")) {
+                        return false;
+                    }
+
+                    if (name.startsWith("loader-")) {
+                        return !Main.args.contains(Constants.Arguments.SNAPSHOT) || name.endsWith("-SNAPSHOT.jar");
+                    }
+
+                    return true;
                 })
                 .sorted(Comparator.comparing(path -> path.getFileName().toString()))
                 .toList();
