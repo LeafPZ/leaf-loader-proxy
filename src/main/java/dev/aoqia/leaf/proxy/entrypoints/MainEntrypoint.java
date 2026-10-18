@@ -22,7 +22,7 @@ import dev.aoqia.leaf.proxy.json.InstallerJson;
 
 import static dev.aoqia.leaf.proxy.Utils.log;
 
-public class ClientEntrypoint {
+public class MainEntrypoint {
     private static final DslJson<Object> JSON = new DslJson<>(Settings.basicSetup());
 
     static void main(final String[] args) {

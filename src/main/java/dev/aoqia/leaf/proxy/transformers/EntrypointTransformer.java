@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 import dev.aoqia.leaf.proxy.Constants;
 import dev.aoqia.leaf.proxy.Main;
 import dev.aoqia.leaf.proxy.Utils;
-import dev.aoqia.leaf.proxy.entrypoints.ClientEntrypoint;
+import dev.aoqia.leaf.proxy.entrypoints.MainEntrypoint;
 
 public class EntrypointTransformer implements ClassFileTransformer {
     private final Instrumentation inst;
@@ -24,7 +24,7 @@ public class EntrypointTransformer implements ClassFileTransformer {
     public byte @Nullable [] transform(@Nullable ClassLoader loader, String className,
         @Nullable Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classFileBuffer)
     {
-        final String entrypointClass = ClientEntrypoint.class.getName().replace('.', '/') + ".class";
+        final String entrypointClass = MainEntrypoint.class.getName().replace('.', '/') + ".class";
         byte[] entrypointClassBytes;
         try (final InputStream is = Main.class.getClassLoader().getResourceAsStream(entrypointClass)) {
             assert is != null;
