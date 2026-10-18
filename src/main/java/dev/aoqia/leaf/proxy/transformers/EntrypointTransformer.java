@@ -33,11 +33,18 @@ public class EntrypointTransformer implements ClassFileTransformer {
             throw new RuntimeException(e);
         }
 
-        // TODO: Differentiate between client and server? Maybe a -server arg or something
-        //   or maybe we can determine client vs server based on original entrypoint?
-        final String entrypoint = Utils.internalName(Constants.CLIENT_ENTRYPOINT);
-        if (entrypoint.equals(className) && inst.removeTransformer(this)) {
-            return Utils.remapClass(entrypointClassBytes, entrypoint);
+        if (!inst.removeTransformer(this)) {
+            return null;
+        }
+
+        final String clientEntrypoint = Utils.internalName(Constants.CLIENT_ENTRYPOINT);
+        if (clientEntrypoint.equals(className)) {
+            return Utils.remapClass(entrypointClassBytes, clientEntrypoint);
+        }
+
+        final String serverEntrypoint = Utils.internalName(Constants.SERVER_ENTRYPOINT);
+        if (serverEntrypoint.equals(className)) {
+            return Utils.remapClass(entrypointClassBytes, serverEntrypoint);
         }
 
         return null;
