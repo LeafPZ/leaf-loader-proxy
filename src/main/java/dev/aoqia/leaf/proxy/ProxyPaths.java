@@ -73,8 +73,8 @@ public final class ProxyPaths {
                     }
 
                     if (name.startsWith("loader-")) {
-                        // TODO: Assumes version information in the JAR name. If this causes a problem, can check the
-                        //     jar manifest later on.
+                        // Assumes version information in the JAR name. If this causes a problem, can check the
+                        //   jar manifest later on.
                         return Main.args.contains(Constants.Arguments.SNAPSHOT) != name.endsWith("-SNAPSHOT.jar");
                     }
 
