@@ -96,7 +96,7 @@ public final class PathUtils {
                     if (name.startsWith("loader-")) {
                         // Assumes version information in the JAR name. If this causes a problem, can check the
                         //   jar manifest later on.
-                        return Main.args.contains(Constants.Arguments.SNAPSHOT) != name.endsWith("-SNAPSHOT.jar");
+                        return Main.args.contains(Constants.Arguments.SNAPSHOT) == name.endsWith("-SNAPSHOT.jar");
                     }
 
                     return true;
