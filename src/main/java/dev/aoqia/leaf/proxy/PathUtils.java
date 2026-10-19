@@ -9,9 +9,9 @@ import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 
-public final class ProxyPaths {
     private static final List<String> GAME_JAR_PATHS = List.of("projectzomboid.jar",
         "projectzomboid/projectzomboid.jar", "Contents/Java/projectzomboid.jar");
+public final class PathUtils {
 
     public static Path gameJar(final Path proxyJar, final Path workingDirectory) throws IOException {
         for (Path directory = proxyJar.toAbsolutePath().normalize().getParent();

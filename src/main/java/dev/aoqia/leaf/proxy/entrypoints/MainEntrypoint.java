@@ -16,7 +16,7 @@ import com.dslplatform.json.runtime.Settings;
 
 import dev.aoqia.leaf.proxy.Constants;
 import dev.aoqia.leaf.proxy.Main;
-import dev.aoqia.leaf.proxy.ProxyPaths;
+import dev.aoqia.leaf.proxy.PathUtils;
 import dev.aoqia.leaf.proxy.Utils;
 import dev.aoqia.leaf.proxy.json.InstallerJson;
 
@@ -32,6 +32,8 @@ public class MainEntrypoint {
             final File proxyJar = getProxyJarPath();
             final Path gameJar = ProxyPaths.gameJar(proxyJar.toPath(), Path.of(""));
             Utils.initLog(gameJar.getParent().toFile());
+            File proxyJar = PathUtils.proxyJar();
+            Path gameJar = PathUtils.gameJar(this.getClass());
 
             log("Initialised logging for leaf-loader-proxy");
             log("Proxy version: " + Constants.VERSION);
@@ -89,9 +91,9 @@ public class MainEntrypoint {
         assert Main.args != null;
 
         log("Attempting to get loader jars...");
-        final Path jarDir = ProxyPaths.loaderDirectory(gameJar, Main.args.get(Constants.Arguments.LOADER_PATH));
+        Path jarDir = PathUtils.loaderDirectory(gameJar, Main.args.get(Constants.Arguments.LOADER_PATH));
         log("Loader directory: " + jarDir);
-        return ProxyPaths.loaderJars(jarDir).stream().map(Path::toFile).toArray(File[]::new);
+        return PathUtils.loaderJars(jarDir).stream().map(Path::toFile).toArray(File[]::new);
     }
 
     private static String getLoaderEntrypoint(final URLClassLoader cl) throws IOException {
