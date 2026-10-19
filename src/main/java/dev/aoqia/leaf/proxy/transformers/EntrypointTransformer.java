@@ -16,6 +16,9 @@ import dev.aoqia.leaf.proxy.entrypoints.MainEntrypoint;
 public class EntrypointTransformer implements ClassFileTransformer {
     private final Instrumentation inst;
 
+    private boolean hasTransformedClient = false;
+    private boolean hasTransformedServer = false;
+
     public EntrypointTransformer(Instrumentation inst) {
         this.inst = inst;
     }
@@ -33,17 +36,25 @@ public class EntrypointTransformer implements ClassFileTransformer {
             throw new RuntimeException(e);
         }
 
-        if (!inst.removeTransformer(this)) {
-            return null;
-        }
-
         final String clientEntrypoint = Utils.internalName(Constants.CLIENT_ENTRYPOINT);
         if (clientEntrypoint.equals(className)) {
+            if (hasTransformedServer && !inst.removeTransformer(this)) {
+                Utils.log("Failed to remove client entrypoint transformer");
+                return null;
+            }
+
+            hasTransformedClient = true;
             return Utils.remapClass(entrypointClassBytes, clientEntrypoint);
         }
 
         final String serverEntrypoint = Utils.internalName(Constants.SERVER_ENTRYPOINT);
         if (serverEntrypoint.equals(className)) {
+            if (hasTransformedClient && !inst.removeTransformer(this)) {
+                Utils.log("Failed to remove server entrypoint transformer");
+                return null;
+            }
+
+            hasTransformedServer = true;
             return Utils.remapClass(entrypointClassBytes, serverEntrypoint);
         }
 
