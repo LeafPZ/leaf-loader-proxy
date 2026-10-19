@@ -5,7 +5,9 @@ import java.lang.instrument.Instrumentation;
 
 import org.jspecify.annotations.Nullable;
 
-import dev.aoqia.leaf.proxy.transformers.EntrypointTransformer;
+import dev.aoqia.leaf.proxy.entrypoints.MainEntrypoint;
+import dev.aoqia.leaf.proxy.transformers.ClientEntrypointTransformer;
+import dev.aoqia.leaf.proxy.transformers.ServerEntrypointTransformer;
 
 public class Main {
     public static @Nullable Arguments args;
@@ -23,6 +25,7 @@ public class Main {
         }
         assert Main.args != null;
 
-        inst.addTransformer(new EntrypointTransformer(inst), false);
+        inst.addTransformer(new ClientEntrypointTransformer(inst, MainEntrypoint.class), false);
+        inst.addTransformer(new ServerEntrypointTransformer(inst, MainEntrypoint.class), false);
     }
 }

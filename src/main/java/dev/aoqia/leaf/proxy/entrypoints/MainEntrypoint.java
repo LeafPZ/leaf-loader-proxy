@@ -3,7 +3,6 @@ package dev.aoqia.leaf.proxy.entrypoints;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -25,12 +24,12 @@ import static dev.aoqia.leaf.proxy.Utils.log;
 public class MainEntrypoint {
     private static final DslJson<Object> JSON = new DslJson<>(Settings.basicSetup());
 
-    void main(final String[] args) {
+    static void main(String[] args) {
         assert Main.args != null;
 
         try {
             File proxyJar = PathUtils.proxyJar();
-            Path gameJar = PathUtils.gameJar(this.getClass());
+            Path gameJar = PathUtils.gameJar(MainEntrypoint.class);
 
             // Try init again just to be sure
             Utils.initLog(gameJar.getParent());
@@ -70,7 +69,7 @@ public class MainEntrypoint {
                 log("Invoking loader entrypoint, have fun!");
                 try {
                     entryMethod.invoke(null, (Object) args);
-                } catch (InvocationTargetException e) {
+                } catch (Exception e) {
                     log(String.format("Failed on thread %s with TCCL %s", Thread.currentThread().getName(),
                         Thread.currentThread().getContextClassLoader().toString()));
                     log(e);
