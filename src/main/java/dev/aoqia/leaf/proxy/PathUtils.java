@@ -63,7 +63,7 @@ public final class PathUtils {
         }
 
         try (var files = Files.list(directory)) {
-            final List<Path> jars = files.filter(Files::isRegularFile)
+            List<Path> jars = files.filter(Files::isRegularFile)
                 .filter(path -> {
                     String name = path.getFileName().toString();
 

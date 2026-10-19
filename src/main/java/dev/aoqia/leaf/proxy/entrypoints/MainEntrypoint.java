@@ -41,9 +41,9 @@ public class MainEntrypoint {
             log("Proxy args: " + Arrays.toString(Main.args.toArray()));
             log("Game JAR: " + gameJar);
 
-            final File[] loaderJars = getLoaderJars(gameJar);
+            File[] loaderJars = getLoaderJars(gameJar);
 
-            final URL[] urls = new URL[loaderJars.length + 1];
+            URL[] urls = new URL[loaderJars.length + 1];
             for (int i = 0; i < loaderJars.length; ++i) {
                 urls[i] = loaderJars[i].toURI().toURL();
             }
@@ -61,11 +61,11 @@ public class MainEntrypoint {
             }).toArray(String[]::new));
             log("Classpath is currently: " + System.getProperty(Constants.Properties.CLASS_PATH));
 
-            try (final URLClassLoader cl = new URLClassLoader(urls, ClassLoader.getPlatformClassLoader())) {
+            try (URLClassLoader cl = new URLClassLoader(urls, ClassLoader.getPlatformClassLoader())) {
                 log("Classloader was created successfully.");
 
-                final Class<?> entrypoint = Class.forName(getLoaderEntrypoint(cl), true, cl);
-                final Method entryMethod = entrypoint.getMethod("main", String[].class);
+                Class<?> entrypoint = Class.forName(getLoaderEntrypoint(cl), true, cl);
+                Method entryMethod = entrypoint.getMethod("main", String[].class);
 
                 log("Invoking loader entrypoint, have fun!");
                 try {
@@ -87,7 +87,7 @@ public class MainEntrypoint {
         return new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
     }
 
-    private static File[] getLoaderJars(final Path gameJar) throws IOException {
+    private static File[] getLoaderJars(Path gameJar) throws IOException {
         assert Main.args != null;
 
         log("Attempting to get loader jars...");
@@ -96,11 +96,11 @@ public class MainEntrypoint {
         return PathUtils.loaderJars(jarDir).stream().map(Path::toFile).toArray(File[]::new);
     }
 
-    private static String getLoaderEntrypoint(final URLClassLoader cl) throws IOException {
+    private static String getLoaderEntrypoint(URLClassLoader cl) throws IOException {
         byte[] jsonBytes;
         try (InputStream is = cl.getResourceAsStream("leaf-installer.json")) {
             if (is == null) {
-                final var e = new RuntimeException("leaf-installer.json doesn't exist in the loader JAR!");
+                var e = new RuntimeException("leaf-installer.json doesn't exist in the loader JAR!");
                 log(e);
                 throw e;
             }
@@ -108,9 +108,9 @@ public class MainEntrypoint {
             jsonBytes = is.readAllBytes();
         }
 
-        final InstallerJson installerJson = JSON.deserialize(InstallerJson.class, jsonBytes, jsonBytes.length);
+        InstallerJson installerJson = JSON.deserialize(InstallerJson.class, jsonBytes, jsonBytes.length);
         if (installerJson == null) {
-            final var e = new RuntimeException("Failed to deserialize installer json");
+            var e = new RuntimeException("Failed to deserialize installer json");
             log(e);
             throw e;
         }

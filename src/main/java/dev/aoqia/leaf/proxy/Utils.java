@@ -17,7 +17,7 @@ import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.SimpleRemapper;
 
 public class Utils {
-    private static PrintWriter LOG;
+    private static @Nullable PrintWriter LOG;
 
     public static void initLog(final File gameDir) throws IOException {
         File leafDir = new File(gameDir, ".leaf/");
@@ -38,17 +38,17 @@ public class Utils {
         LOG = null;
     }
 
-    public static void log(final String s) {
         System.out.println(s);
+    public static void log(String s) {
         LOG.println(s);
     }
 
-    public static void log(final Exception e) {
+    public static void log(Exception e) {
         e.printStackTrace(System.err);
         e.printStackTrace(LOG);
     }
 
-    public static byte[] remapClass(final byte[] originalBytes, final String newInternalName) {
+    public static byte[] remapClass(byte[] originalBytes, String newInternalName) {
         ClassReader reader = new ClassReader(originalBytes);
         ClassWriter writer = new ClassWriter(0);
         ClassRemapper remapper = new ClassRemapper(writer,
@@ -57,12 +57,13 @@ public class Utils {
         return writer.toByteArray();
     }
 
-    public static String internalName(final String s) {
+    public static String internalName(String s) {
         return s.replace('.', '/');
     }
 
     public static void addToClasspath(final String... entries) {
         final List<String> origClassPath = new ArrayList<>(
+        List<String> origClassPath = new ArrayList<>(
             Arrays.asList(System.getProperty(Constants.Properties.CLASS_PATH).split(File.pathSeparator)));
 
         String classPath = String.join(File.pathSeparator, origClassPath);
@@ -74,12 +75,12 @@ public class Utils {
         System.setProperty(Constants.Properties.CLASS_PATH, classPath);
     }
 
-    public static void removeFromClasspath(final Predicate<String> predicate) {
+    public static void removeFromClasspath(Predicate<String> predicate) {
         List<String> origClassPath = new ArrayList<>(
             Arrays.asList(System.getProperty(Constants.Properties.CLASS_PATH).split(File.pathSeparator)));
         origClassPath.removeIf(predicate);
 
-        final String classPath = String.join(File.pathSeparator, origClassPath);
+        String classPath = String.join(File.pathSeparator, origClassPath);
         System.setProperty(Constants.Properties.CLASS_PATH, classPath);
     }
 }
