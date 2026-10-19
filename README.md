@@ -3,7 +3,7 @@
 **A loader that loads [leaf-loader][LeafLoader] from the Workshop. Ironic?!**
 
 ![License](https://img.shields.io/github/license/LeafPZ/leaf-loader-proxy?label=License)
-![Gradle version](https://img.shields.io/badge/Gradle-9.7.1-teal?logo=gradle)
+![Gradle version](https://img.shields.io/badge/Gradle-9.8.1-teal?logo=gradle)
 ![Build status](https://github.com/LeafPZ/leaf-loader-proxy/actions/workflows/build.yml/badge.svg?branch=main&label=build)
 ![Downloads](https://img.shields.io/github/downloads/LeafPZ/leaf-loader-proxy/total?label=Downloads)
 ![Code Size](https://img.shields.io/github/languages/code-size/LeafPZ/leaf-loader-proxy?label=Code%20Size)
