@@ -1,5 +1,6 @@
 package dev.aoqia.leaf.proxy;
 
+import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 
 import org.jspecify.annotations.Nullable;
@@ -10,6 +11,12 @@ public class Main {
     public static @Nullable Arguments args;
 
     public static void premain(@Nullable String args, Instrumentation inst) {
+        try {
+            Utils.initLog(PathUtils.workingDir());
+        } catch (IOException e) {
+            System.err.println("Failed to initialise proxy logging system");
+        }
+
         Main.args = new Arguments();
         if (args != null) {
             Main.args.parse(args.split(","));

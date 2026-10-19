@@ -1,7 +1,9 @@
 package dev.aoqia.leaf.proxy;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -9,28 +11,47 @@ import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 
-    private static final List<String> GAME_JAR_PATHS = List.of("projectzomboid.jar",
-        "projectzomboid/projectzomboid.jar", "Contents/Java/projectzomboid.jar");
 public final class PathUtils {
+    public static <T> Path gameJar(Class<T> entrypointClass) throws IOException, URISyntaxException {
+        Utils.log("Trying to get game JAR from proxy location");
 
-    public static Path gameJar(final Path proxyJar, final Path workingDirectory) throws IOException {
-        for (Path directory = proxyJar.toAbsolutePath().normalize().getParent();
-            directory != null; directory = directory.getParent()) {
-            for (String relativePath : GAME_JAR_PATHS) {
-                final Path candidate = directory.resolve(relativePath);
-                if (Files.isRegularFile(candidate)) {
-                    return candidate.toRealPath();
-                }
+        Path gameDir = proxyJar().toPath().getParent().getParent().getParent().toAbsolutePath().normalize();
+        Path gameJar = gameDir.resolve(Constants.GAME_JAR_PATHS[0]);
+        if (Files.exists(gameJar)) {
+            return gameJar.toAbsolutePath().normalize();
+        }
+
+        Utils.log("Trying to get game JAR from working directory");
+
+        Path workingDir = Path.of(".").toAbsolutePath();
+        for (String jarPathStr : Constants.GAME_JAR_PATHS) {
+            return workingDir.resolve(jarPathStr).toAbsolutePath().normalize();
+        }
+
+        GameEnv env = Utils.getEntrypointEnv(entrypointClass);
+        Utils.log("Trying to get game JAR from leaf %s environment variable".formatted(env.toString()));
+
+        if (env == GameEnv.CLIENT) {
+            String leafClientPath = System.getenv("LEAF_CLIENT_GAME_PATH");
+            if (leafClientPath != null) {
+                return Path.of(leafClientPath);
+            }
+        } else if (env == GameEnv.SERVER) {
+            String leafServerPath = System.getenv("LEAF_SERVER_GAME_PATH");
+            if (leafServerPath != null) {
+                return Path.of(leafServerPath);
             }
         }
 
-        final Path candidate = workingDirectory.toAbsolutePath().normalize().resolve("projectzomboid.jar");
-        if (Files.isRegularFile(candidate)) {
-            return candidate.toRealPath();
-        }
+        throw new FileNotFoundException("Cannot find projectzomboid.jar relative to ");
+    }
 
-        throw new FileNotFoundException("Cannot find projectzomboid.jar relative to " + proxyJar
-            + " or in " + workingDirectory.toAbsolutePath());
+    public static Path workingDir() {
+        return Path.of(".").toAbsolutePath().normalize();
+    }
+
+    public static File proxyJar() throws URISyntaxException {
+        return new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
     }
 
     public static Path loaderDirectory(Path gameJar, @Nullable String override) throws IOException {

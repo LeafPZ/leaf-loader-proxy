@@ -6,11 +6,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.jspecify.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.ClassRemapper;
@@ -19,13 +21,17 @@ import org.objectweb.asm.commons.SimpleRemapper;
 public class Utils {
     private static @Nullable PrintWriter LOG;
 
-    public static void initLog(final File gameDir) throws IOException {
-        File leafDir = new File(gameDir, ".leaf/");
-        if (!leafDir.exists()) {
-            Files.createDirectories(leafDir.toPath());
+    public static void initLog(Path workingDir) throws IOException {
+        if (LOG != null) {
+            return;
         }
 
-        File logFile = new File(leafDir, "proxy.log");
+        Path leafDir = workingDir.resolve(".leaf/");
+        if (!Files.exists(leafDir)) {
+            Files.createDirectories(leafDir);
+        }
+
+        File logFile = leafDir.resolve("proxy.log").toFile();
         LOG = new PrintWriter(new BufferedWriter(new FileWriter(logFile, false)), true);
     }
 
@@ -38,8 +44,10 @@ public class Utils {
         LOG = null;
     }
 
-        System.out.println(s);
     public static void log(String s) {
+        System.out.println("[leaf-loader-proxy]: " + s);
+
+        assert LOG != null;
         LOG.println(s);
     }
 
@@ -61,8 +69,7 @@ public class Utils {
         return s.replace('.', '/');
     }
 
-    public static void addToClasspath(final String... entries) {
-        final List<String> origClassPath = new ArrayList<>(
+    public static void addToClasspath(String... entries) {
         List<String> origClassPath = new ArrayList<>(
             Arrays.asList(System.getProperty(Constants.Properties.CLASS_PATH).split(File.pathSeparator)));
 
@@ -82,5 +89,13 @@ public class Utils {
 
         String classPath = String.join(File.pathSeparator, origClassPath);
         System.setProperty(Constants.Properties.CLASS_PATH, classPath);
+    }
+
+    public static <T> GameEnv getEntrypointEnv(Class<T> entrypointClass) {
+        return switch (entrypointClass.getName()) {
+            case Constants.CLIENT_ENTRYPOINT -> GameEnv.CLIENT;
+            case Constants.SERVER_ENTRYPOINT -> GameEnv.SERVER;
+            default -> throw new RuntimeException("Failed to get entrypoint environment");
+        };
     }
 }

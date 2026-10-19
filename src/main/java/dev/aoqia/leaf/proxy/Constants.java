@@ -11,6 +11,12 @@ public class Constants {
     public static final String CLIENT_ENTRYPOINT = "zombie.gameStates.MainScreenState";
     public static final String SERVER_ENTRYPOINT = "zombie.network.GameServer";
 
+    public static final String[] GAME_JAR_PATHS = {
+        "projectzomboid.jar",
+        "projectzomboid/projectzomboid.jar",
+        "Contents/Java/projectzomboid.jar"
+    };
+
     public static final class Properties {
         public static final String CLASS_PATH = "java.class.path";
     }

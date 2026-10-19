@@ -25,15 +25,15 @@ import static dev.aoqia.leaf.proxy.Utils.log;
 public class MainEntrypoint {
     private static final DslJson<Object> JSON = new DslJson<>(Settings.basicSetup());
 
-    static void main(final String[] args) {
+    void main(final String[] args) {
         assert Main.args != null;
 
         try {
-            final File proxyJar = getProxyJarPath();
-            final Path gameJar = ProxyPaths.gameJar(proxyJar.toPath(), Path.of(""));
-            Utils.initLog(gameJar.getParent().toFile());
             File proxyJar = PathUtils.proxyJar();
             Path gameJar = PathUtils.gameJar(this.getClass());
+
+            // Try init again just to be sure
+            Utils.initLog(gameJar.getParent());
 
             log("Initialised logging for leaf-loader-proxy");
             log("Proxy version: " + Constants.VERSION);
@@ -81,10 +81,6 @@ public class MainEntrypoint {
             Utils.closeLog();
             throw new RuntimeException(e);
         }
-    }
-
-    private static File getProxyJarPath() throws URISyntaxException {
-        return new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
     }
 
     private static File[] getLoaderJars(Path gameJar) throws IOException {
