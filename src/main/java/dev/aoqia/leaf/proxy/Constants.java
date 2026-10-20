@@ -1,8 +1,12 @@
 package dev.aoqia.leaf.proxy;
 
+import com.dslplatform.json.DslJson;
+import com.dslplatform.json.runtime.Settings;
 import org.objectweb.asm.Opcodes;
 
 public class Constants {
+    public static final DslJson<Object> JSON = new DslJson<>(Settings.basicSetup());
+
     public static final String VERSION = Main.class.getPackage().getImplementationVersion();
     public static final String WORKSHOP_ID = "3776625738";
 
@@ -12,9 +16,14 @@ public class Constants {
     public static final String SERVER_ENTRYPOINT = "zombie.network.GameServer";
 
     public static final String[] GAME_JAR_PATHS = {
+        // Standard
         "projectzomboid.jar",
+        // Linux client
         "projectzomboid/projectzomboid.jar",
-        "Contents/Java/projectzomboid.jar"
+        // MacOS client
+        "Contents/Java/projectzomboid.jar",
+        // Linux server
+        "java/projectzomboid.jar",
     };
 
     public static final class Properties {
