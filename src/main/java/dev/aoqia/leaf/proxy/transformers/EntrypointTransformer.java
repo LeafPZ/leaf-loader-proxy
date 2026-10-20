@@ -41,6 +41,10 @@ public final class EntrypointTransformer implements ClassFileTransformer {
                 return null;
             }
 
+            if (loader != ClassLoader.getSystemClassLoader()) {
+                return null;
+            }
+
             String rawEntrypoint = env == GameEnv.SERVER ? Constants.SERVER_ENTRYPOINT : Constants.CLIENT_ENTRYPOINT;
             String gameEntrypoint = Utils.internalName(rawEntrypoint);
             if (!gameEntrypoint.equals(className)) {
