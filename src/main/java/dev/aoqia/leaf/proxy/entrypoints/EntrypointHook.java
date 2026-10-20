@@ -21,7 +21,7 @@ import dev.aoqia.leaf.proxy.json.InstallerJson;
 
 import static dev.aoqia.leaf.proxy.Utils.log;
 
-public class MainEntrypoint {
+public class EntrypointHook {
     private static final DslJson<Object> JSON = new DslJson<>(Settings.basicSetup());
 
     static void main(String[] args) {
@@ -29,7 +29,7 @@ public class MainEntrypoint {
 
         try {
             File proxyJar = PathUtils.proxyJar();
-            Path gameJar = PathUtils.gameJar(MainEntrypoint.class);
+            Path gameJar = PathUtils.gameJar(EntrypointHook.class);
 
             // Try init again just to be sure
             Utils.initLog(gameJar.getParent());
