@@ -1,5 +1,3 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-
 val isCiBuild = providers.environmentVariable("CI").map { it.toBoolean() }.orElse(false).get()
 val isSnapshot = providers.gradleProperty("isSnapshot").map { it.toBoolean() }.orElse(false).get()
 
@@ -67,21 +65,6 @@ tasks.withType<AbstractPublishToMaven>().configureEach {
 
 tasks.withType<Sign>().configureEach {
     enabled = isCiBuild && !isSnapshot
-}
-
-tasks.register<Copy>("copyToGame") {
-    description = "Copies the JAR to the game to simulate production."
-
-    val path: String = if (Os.isFamily(Os.FAMILY_UNIX)) {
-        "projectzomboid"
-    } else if (Os.isFamily(Os.FAMILY_MAC)) {
-        "Contents/Java"
-    } else {
-        ""
-    }
-
-    from(tasks.shadowJar.flatMap { it.archiveFile })
-    into(providers.environmentVariable("LEAF_CLIENT_GAME_PATH").map { "$it/$path" })
 }
 
 publishing {
