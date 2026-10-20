@@ -3,7 +3,9 @@ package dev.aoqia.leaf.proxy;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -11,8 +13,12 @@ import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 
+import dev.aoqia.leaf.proxy.json.InstallerJson;
+
+import static dev.aoqia.leaf.proxy.Utils.log;
+
 public final class PathUtils {
-    public static <T> Path gameJar(Class<T> entrypointClass) throws IOException, URISyntaxException {
+    public static Path gameJar() throws IOException, URISyntaxException {
         Utils.log("Trying to get game JAR from proxy location");
 
         Path gameDir = proxyJar().toPath().getParent().getParent().getParent().toAbsolutePath().normalize();
@@ -23,31 +29,21 @@ public final class PathUtils {
 
         Utils.log("Trying to get game JAR from working directory");
 
-        Path workingDir = Path.of(".").toAbsolutePath();
+        Path workingDir = workingDir();
         for (String jarPathStr : Constants.GAME_JAR_PATHS) {
-            return workingDir.resolve(jarPathStr).toAbsolutePath().normalize();
-        }
-
-        GameEnv env = Utils.getEntrypointEnv(entrypointClass);
-        Utils.log("Trying to get game JAR from leaf %s environment variable".formatted(env.toString()));
-
-        if (env == GameEnv.CLIENT) {
-            String leafClientPath = System.getenv("LEAF_CLIENT_GAME_PATH");
-            if (leafClientPath != null) {
-                return Path.of(leafClientPath);
+            Path p = workingDir.resolve(jarPathStr);
+            if (!Files.exists(p)) {
+                continue;
             }
-        } else if (env == GameEnv.SERVER) {
-            String leafServerPath = System.getenv("LEAF_SERVER_GAME_PATH");
-            if (leafServerPath != null) {
-                return Path.of(leafServerPath);
-            }
+
+            return p.toAbsolutePath().normalize();
         }
 
         throw new FileNotFoundException("Cannot find projectzomboid.jar relative to ");
     }
 
     public static Path workingDir() {
-        return Path.of(".").toAbsolutePath().normalize();
+        return Path.of("").toAbsolutePath().normalize();
     }
 
     public static File proxyJar() throws URISyntaxException {
@@ -72,6 +68,15 @@ public final class PathUtils {
 
         throw new RuntimeException("Cannot locate Steam Workshop relative to " + gameJar
             + ". Use the proxy argument -loaderPath=<directory containing the loader JARs>.");
+    }
+
+    public static File[] getLoaderJars(Path gameJar) throws IOException {
+        assert Main.args != null;
+
+        log("Attempting to get loader jars...");
+        Path jarDir = PathUtils.loaderDirectory(gameJar, Main.args.get(Constants.Arguments.LOADER_PATH));
+        log("Loader directory: " + jarDir);
+        return PathUtils.loaderJars(jarDir).stream().map(Path::toFile).toArray(File[]::new);
     }
 
     public static List<Path> loaderJars(Path directory) throws IOException {
@@ -110,5 +115,27 @@ public final class PathUtils {
 
             return jars;
         }
+    }
+
+    public static String getLoaderEntrypoint(URLClassLoader cl, GameEnv env) throws IOException {
+        byte[] jsonBytes;
+        try (InputStream is = cl.getResourceAsStream("leaf-installer.json")) {
+            if (is == null) {
+                var e = new RuntimeException("leaf-installer.json doesn't exist in the loader JAR!");
+                log(e);
+                throw e;
+            }
+
+            jsonBytes = is.readAllBytes();
+        }
+
+        InstallerJson installerJson = Constants.JSON.deserialize(InstallerJson.class, jsonBytes, jsonBytes.length);
+        if (installerJson == null) {
+            var e = new RuntimeException("Failed to deserialize installer json");
+            log(e);
+            throw e;
+        }
+
+        return env == GameEnv.SERVER ? installerJson.mainClass().server() : installerJson.mainClass().client();
     }
 }

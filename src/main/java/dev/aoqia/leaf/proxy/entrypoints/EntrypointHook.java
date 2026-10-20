@@ -81,35 +81,4 @@ public class EntrypointHook {
             throw new RuntimeException(e);
         }
     }
-
-    private static File[] getLoaderJars(Path gameJar) throws IOException {
-        assert Main.args != null;
-
-        log("Attempting to get loader jars...");
-        Path jarDir = PathUtils.loaderDirectory(gameJar, Main.args.get(Constants.Arguments.LOADER_PATH));
-        log("Loader directory: " + jarDir);
-        return PathUtils.loaderJars(jarDir).stream().map(Path::toFile).toArray(File[]::new);
-    }
-
-    private static String getLoaderEntrypoint(URLClassLoader cl) throws IOException {
-        byte[] jsonBytes;
-        try (InputStream is = cl.getResourceAsStream("leaf-installer.json")) {
-            if (is == null) {
-                var e = new RuntimeException("leaf-installer.json doesn't exist in the loader JAR!");
-                log(e);
-                throw e;
-            }
-
-            jsonBytes = is.readAllBytes();
-        }
-
-        InstallerJson installerJson = JSON.deserialize(InstallerJson.class, jsonBytes, jsonBytes.length);
-        if (installerJson == null) {
-            var e = new RuntimeException("Failed to deserialize installer json");
-            log(e);
-            throw e;
-        }
-
-        return installerJson.mainClass().client();
-    }
 }
