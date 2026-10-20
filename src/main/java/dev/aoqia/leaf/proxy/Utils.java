@@ -51,9 +51,9 @@ public class Utils {
         LOG.println(s);
     }
 
-    public static void log(Exception e) {
-        e.printStackTrace(System.err);
-        e.printStackTrace(LOG);
+    public static void log(Throwable t) {
+        t.printStackTrace(System.err);
+        t.printStackTrace(LOG);
     }
 
     public static byte[] remapClass(byte[] originalBytes, String newInternalName) {
@@ -89,13 +89,5 @@ public class Utils {
 
         String classPath = String.join(File.pathSeparator, origClassPath);
         System.setProperty(Constants.Properties.CLASS_PATH, classPath);
-    }
-
-    public static <T> GameEnv getEntrypointEnv(Class<T> entrypointClass) {
-        return switch (entrypointClass.getName()) {
-            case Constants.CLIENT_ENTRYPOINT -> GameEnv.CLIENT;
-            case Constants.SERVER_ENTRYPOINT -> GameEnv.SERVER;
-            default -> throw new RuntimeException("Failed to get entrypoint environment");
-        };
     }
 }
